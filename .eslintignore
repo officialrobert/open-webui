@@ -11,3 +11,9 @@ node_modules
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+
+# Ignore start.js script
+start.js
+
+# Ignore start.cjs script
+start.cjs

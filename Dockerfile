@@ -22,7 +22,7 @@ ARG UID=0
 ARG GID=0
 
 ######## WebUI frontend ########
-FROM --platform=$BUILDPLATFORM node:22-alpine3.20 AS build
+FROM --platform=$BUILDPLATFORM node:22-alpine3.20 AS frontend-build
 ARG BUILD_HASH
 
 WORKDIR /app
@@ -37,8 +37,8 @@ COPY . .
 ENV APP_BUILD_HASH=${BUILD_HASH}
 RUN npm run build
 
-######## WebUI backend ########
-FROM python:3.11-slim-bookworm AS base
+######## Python dependencies ########
+FROM python:3.11-slim-bookworm AS deps
 
 # Use args
 ARG USE_CUDA
@@ -62,8 +62,7 @@ ENV ENV=prod \
     USE_RERANKING_MODEL_DOCKER=${USE_RERANKING_MODEL}
 
 ## Basis URL Config ##
-ENV OLLAMA_BASE_URL="/ollama" \
-    OPENAI_API_BASE_URL=""
+ENV OPENAI_API_BASE_URL="https://openai.inference.de-txl.ionos.com/v1"
 
 ## API Key and Security Config ##
 ENV OPENAI_API_KEY="" \
@@ -88,9 +87,6 @@ ENV TIKTOKEN_ENCODING_NAME="cl100k_base" \
 
 ## Hugging Face download cache ##
 ENV HF_HOME="/app/backend/data/cache/embedding/models"
-
-## Torch Extensions ##
-# ENV TORCH_EXTENSIONS_DIR="/.cache/torch_extensions"
 
 #### Other models ##########################################################
 
@@ -143,22 +139,13 @@ RUN pip3 install --no-cache-dir uv && \
     fi; \
     mkdir -p /app/backend/data && chown -R $UID:$GID /app/backend/data/
 
-# Install Ollama if requested
-RUN if [ "$USE_OLLAMA" = "true" ] && [ "$USE_SLIM" != "true" ]; then \
-    date +%s > /tmp/ollama_build_hash && \
-    echo "Cache broken at timestamp: `cat /tmp/ollama_build_hash`" && \
-    curl -fsSL https://ollama.com/install.sh | sh && \
-    rm -rf /var/lib/apt/lists/*; \
-    fi
-
-# copy embedding weight from build
-# RUN mkdir -p /root/.cache/chroma/onnx_models/all-MiniLM-L6-v2
-# COPY --from=build /app/onnx /root/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx
+######## Final stage ########
+FROM deps AS final
 
 # copy built frontend files
-COPY --chown=$UID:$GID --from=build /app/build /app/build
-COPY --chown=$UID:$GID --from=build /app/CHANGELOG.md /app/CHANGELOG.md
-COPY --chown=$UID:$GID --from=build /app/package.json /app/package.json
+COPY --chown=$UID:$GID --from=frontend-build /app/build /app/build
+COPY --chown=$UID:$GID --from=frontend-build /app/CHANGELOG.md /app/CHANGELOG.md
+COPY --chown=$UID:$GID --from=frontend-build /app/package.json /app/package.json
 
 # copy backend files
 COPY --chown=$UID:$GID ./backend .
