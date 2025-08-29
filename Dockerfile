@@ -35,6 +35,9 @@ RUN npm ci --force
 
 COPY . .
 ENV APP_BUILD_HASH=${BUILD_HASH}
+
+# Set Node.js memory limits to prevent heap out of memory
+ENV NODE_OPTIONS="--max-old-space-size=5120"
 RUN npm run build
 
 ######## Python dependencies ########
