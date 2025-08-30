@@ -184,6 +184,47 @@ async function main() {
 		const dockerComposeCmd = getDockerComposeCommand();
 		logInfo(`Using: ${dockerComposeCmd}`);
 
+		// Create default environment file if it doesn't exist
+		const envFile = path.join(process.cwd(), '.env.prod');
+		if (!fs.existsSync(envFile)) {
+			logInfo('Creating default .env.prod file...');
+			const defaultEnv = `# Open WebUI Configuration
+# Add your configuration here
+WEBUI_SECRET_KEY=your-secret-key-here
+OPENAI_API_KEY=your-openai-api-key-here
+IONOS_SECURE_TOKEN=your-ionos-token-here
+
+# Optional: Authentication
+WEBUI_AUTH=false
+`;
+			fs.writeFileSync(envFile, defaultEnv);
+			logSuccess('Created .env.prod file with default values');
+			logWarning('Please edit .env.prod with your actual configuration values');
+		} else {
+			logSuccess('.env.prod file already exists');
+		}
+
+		// Load environment variables from .env.prod file
+		logInfo('Loading environment variables from .env.prod...');
+		try {
+			const envContent = fs.readFileSync(envFile, 'utf8');
+			const envLines = envContent.split('\n');
+
+			envLines.forEach((line) => {
+				const trimmedLine = line.trim();
+				if (trimmedLine && !trimmedLine.startsWith('#')) {
+					const [key, ...valueParts] = trimmedLine.split('=');
+					if (key && valueParts.length > 0) {
+						const value = valueParts.join('=');
+						process.env[key.trim()] = value.trim();
+					}
+				}
+			});
+			logSuccess('Environment variables loaded successfully');
+		} catch (error) {
+			logWarning('Could not load environment variables from .env.prod');
+		}
+
 		// Check if images need to be built
 		logStep('2', 'Checking existing images...');
 

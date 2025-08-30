@@ -153,6 +153,22 @@ COPY --chown=$UID:$GID --from=frontend-build /app/package.json /app/package.json
 # copy backend files
 COPY --chown=$UID:$GID ./backend .
 
+# Create a script to load environment variables (fail-safe)
+RUN echo '#!/bin/bash\n\
+# Load environment variables from .env files (fail-safe)\n\
+if [ -f ".env.prod" ]; then\n\
+    echo "Loading .env.prod"\n\
+    export $(cat .env.prod | grep -v "^#" | xargs) 2>/dev/null || true\n\
+elif [ -f ".env" ]; then\n\
+    echo "Loading .env"\n\
+    export $(cat .env | grep -v "^#" | xargs) 2>/dev/null || true\n\
+else\n\
+    echo "No environment files found, using defaults"\n\
+fi\n\
+\n\
+# Execute the original command\n\
+exec "$@"' > /app/backend/load-env.sh && chmod +x /app/backend/load-env.sh
+
 EXPOSE 8080
 
 HEALTHCHECK CMD curl --silent --fail http://localhost:${PORT:-8080}/health | jq -ne 'input.status == true' || exit 1
@@ -172,4 +188,5 @@ ARG BUILD_HASH
 ENV WEBUI_BUILD_VERSION=${BUILD_HASH}
 ENV DOCKER=true
 
-CMD [ "bash", "start.sh"]
+# Use the environment loading script to load .env files before starting
+CMD [ "bash", "load-env.sh", "bash", "start.sh"]
