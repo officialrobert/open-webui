@@ -74,13 +74,18 @@ ENV OPENAI_API_KEY="" \
     ENABLE_LOGIN_FORM=true \
     ENABLE_SIGNUP_PASSWORD_CONFIRMATION=false \
     DEFAULT_USER_ROLE=admin \
+    # OPENAI CONFIGURATION - CRITICAL FOR MODEL DISCOVERY
+    ENABLE_OPENAI_API=true \
     ENABLE_OLLAMA_API=false \
     USE_OLLAMA_DOCKER=false \
     USE_CUDA_DOCKER=false \
     USE_SLIM_DOCKER=true \
     # PROXY TRUST CONFIGURATION
     FORWARDED_ALLOW_IPS="*" \
-    UVICORN_WORKERS=1
+    UVICORN_WORKERS=1 \
+    # Disable cookie-based sessions for load balancer compatibility
+    WEBUI_SESSION_COOKIE_SAME_SITE="none" \
+    WEBUI_SESSION_COOKIE_SECURE="true"
 
 ## Admin Permissions Config - Full Access ##
 # ENV USER_PERMISSIONS_WORKSPACE_MODELS_ACCESS=true \
