@@ -190,8 +190,6 @@ async function main() {
 			logInfo('Creating default .env.prod file...');
 			const defaultEnv = `# Open WebUI Configuration
 # Add your configuration here
-WEBUI_SECRET_KEY=your-secret-key-here
-OPENAI_API_KEY=your-openai-api-key-here
 IONOS_SECURE_TOKEN=your-ionos-token-here
 
 # Optional: Authentication

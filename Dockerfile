@@ -70,6 +70,7 @@ ENV OPENAI_API_BASE_URL="https://openai.inference.de-txl.ionos.com/v1"
 ## API Key and Security Config ##
 ENV OPENAI_API_KEY="" \
     WEBUI_SECRET_KEY="" \
+    WEBUI_AUTH=false \
     SCARF_NO_ANALYTICS=true \
     DO_NOT_TRACK=true \
     ANONYMIZED_TELEMETRY=false

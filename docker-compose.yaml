@@ -19,6 +19,7 @@ services:
       - 'IONOS_SECURE_TOKEN=${IONOS_SECURE_TOKEN:-}'
       - 'WEBUI_AUTH_TRUSTED_EMAIL_HEADER_REGEX=${WEBUI_AUTH_TRUSTED_EMAIL_HEADER_REGEX:-}'
       - 'WEBUI_AUTH_TRUSTED_EMAIL_DOMAIN_REGEX=${WEBUI_AUTH_TRUSTED_EMAIL_DOMAIN_REGEX:-}'
+      - 'WEBUI_AUTH=false'
     extra_hosts:
       - host.docker.internal:host-gateway
     restart: unless-stopped
@@ -42,6 +43,7 @@ services:
       - 'IONOS_SECURE_TOKEN=${IONOS_SECURE_TOKEN:-}'
       - 'WEBUI_AUTH_TRUSTED_EMAIL_HEADER_REGEX=${WEBUI_AUTH_TRUSTED_EMAIL_HEADER_REGEX:-}'
       - 'WEBUI_AUTH_TRUSTED_EMAIL_DOMAIN_REGEX=${WEBUI_AUTH_TRUSTED_EMAIL_DOMAIN_REGEX:-}'
+      - 'WEBUI_AUTH=false'
     extra_hosts:
       - host.docker.internal:host-gateway
     restart: unless-stopped
@@ -65,6 +67,7 @@ services:
       - 'IONOS_SECURE_TOKEN=${IONOS_SECURE_TOKEN:-}'
       - 'WEBUI_AUTH_TRUSTED_EMAIL_HEADER_REGEX=${WEBUI_AUTH_TRUSTED_EMAIL_HEADER_REGEX:-}'
       - 'WEBUI_AUTH_TRUSTED_EMAIL_DOMAIN_REGEX=${WEBUI_AUTH_TRUSTED_EMAIL_DOMAIN_REGEX:-}'
+      - 'WEBUI_AUTH=false'
     extra_hosts:
       - host.docker.internal:host-gateway
     restart: unless-stopped
