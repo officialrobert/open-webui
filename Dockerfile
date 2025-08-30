@@ -69,7 +69,7 @@ ENV OPENAI_API_BASE_URL="https://openai.inference.de-txl.ionos.com/v1"
 
 ## API Key and Security Config ##
 ENV OPENAI_API_KEY="" \
-    WEBUI_SECRET_KEY="" \
+    WEBUI_SECRET_KEY="f7ccfc96-088b-428a-955d-ac9040fbaa94" \
     WEBUI_AUTH=false \
     SCARF_NO_ANALYTICS=true \
     DO_NOT_TRACK=true \
@@ -112,7 +112,21 @@ ENV USER_PERMISSIONS_WORKSPACE_MODELS_ACCESS=true \
     ENABLE_ADMIN_WORKSPACE_CONTENT_ACCESS=true \
     BYPASS_ADMIN_ACCESS_CONTROL=true \
     ENABLE_ADMIN_CHAT_ACCESS=true \
-    DEFAULT_USER_ROLE=admin
+    DEFAULT_USER_ROLE=admin \
+    ENABLE_SIGNUP=true \
+    ENABLE_LOGIN_FORM=true \
+    ENABLE_INITIAL_ADMIN_SIGNUP=true \
+    ENABLE_SIGNUP_PASSWORD_CONFIRMATION=false \
+    ENABLE_CHANNELS=true \
+    ENABLE_NOTES=true \
+    ENABLE_COMMUNITY_SHARING=true \
+    ENABLE_MESSAGE_RATING=true \
+    ENABLE_USER_WEBHOOKS=true \
+    ENABLE_WEB_SEARCH=true \
+    ENABLE_CODE_EXECUTION=true \
+    ENABLE_CODE_INTERPRETER=true \
+    ENABLE_IMAGE_GENERATION=true \
+    ENABLE_AUTOCOMPLETE_GENERATION=true
 
 #### Other models #########################################################
 ## whisper TTS model settings ##
