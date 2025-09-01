@@ -1423,6 +1423,10 @@ if THREAD_POOL_SIZE is not None and isinstance(THREAD_POOL_SIZE, str):
 
 
 def validate_cors_origin(origin):
+    # Skip validation for wildcard
+    if origin == "*":
+        return
+        
     parsed_url = urlparse(origin)
 
     # Check if the scheme is either http or https, or a custom scheme

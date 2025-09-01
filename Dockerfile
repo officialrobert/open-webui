@@ -85,7 +85,9 @@ ENV OPENAI_API_KEY="" \
     UVICORN_WORKERS=1 \
     # Disable cookie-based sessions for load balancer compatibility
     WEBUI_SESSION_COOKIE_SAME_SITE="none" \
-    WEBUI_SESSION_COOKIE_SECURE="true"
+    WEBUI_SESSION_COOKIE_SECURE="true" \
+    # WEATHER API CONFIGURATION
+    WEATHER_API_URL="http://208.94.36.189/index.php?rest_route=/custom-api/v1/weather"
 
 ## Admin Permissions Config - Full Access ##
 # ENV USER_PERMISSIONS_WORKSPACE_MODELS_ACCESS=true \

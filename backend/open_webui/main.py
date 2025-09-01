@@ -534,6 +534,11 @@ async def lifespan(app: FastAPI):
     # when the first user lands on the / route.
     log.info("Installing external dependencies of functions and tools...")
     install_tool_and_function_dependencies()
+    
+    # Create default weather tool
+    log.info("Creating default weather tool...")
+    from open_webui.routers.tools import create_default_weather_tool
+    create_default_weather_tool(app.state)
 
     app.state.redis = get_redis_connection(
         redis_url=REDIS_URL,

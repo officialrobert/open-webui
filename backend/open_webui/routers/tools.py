@@ -30,6 +30,108 @@ log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])
 
 
+def create_default_weather_tool(app_state=None):
+    """Create the default weather tool if it doesn't exist"""
+    try:
+        # Check if weather tool already exists
+        existing_tool = Tools.get_tool_by_id("weather")
+        if existing_tool:
+            # Load into app state if provided
+            if app_state and "weather" not in app_state.TOOLS:
+                module, _ = load_tool_module_by_id("weather")
+                app_state.TOOLS["weather"] = module
+            return existing_tool
+        
+        # Create the weather tool content
+        weather_tool_content = '''import os
+import requests
+from typing import Optional
+from pydantic import BaseModel, Field
+
+
+class Tools:
+    def get_current_weather(
+        self,
+        city: str = Field(
+            "Manila", description="Get the current weather for a given city."
+        ),
+    ) -> str:
+        """
+        Get the current weather for a given city using the custom weather API.
+        """
+
+        weather_api_url = os.getenv("WEATHER_API_URL", "http://208.94.36.189/index.php?rest_route=/custom-api/v1/weather")
+        
+        params = {
+            "city": city,
+        }
+
+        try:
+            response = requests.get(weather_api_url, params=params)
+            response.raise_for_status()
+            data = response.json()
+
+            if not data.get("success"):
+                return f"Error fetching weather data: {data.get('message', 'Unknown error')}"
+
+            weather_data = data["data"]["weather"]
+            location_data = data["data"]["location"]
+            
+            temperature = weather_data["temperature"]
+            description = weather_data["description"]
+            humidity = weather_data["humidity"]
+            wind_speed = weather_data["wind_speed"]
+            city_name = location_data["city"]
+
+            return f"Weather in {city_name}: {temperature}°C, {description}, Humidity: {humidity}%, Wind Speed: {wind_speed} m/s"
+        except requests.RequestException as e:
+            return f"Error fetching weather data: {str(e)}"
+        except Exception as e:
+            return f"Error parsing weather data: {str(e)}"
+        '''
+
+        # Create tool form data
+        from open_webui.models.tools import ToolForm, ToolMeta
+        
+        form_data = ToolForm(
+            id="weather",
+            name="Weather Tool",
+            content=weather_tool_content,
+            meta=ToolMeta(
+                description="Get current weather information for any city using the custom weather API"
+            ),
+            access_control={}  # Public access
+        )
+        
+        # Load the tool module
+        form_data.content = replace_imports(form_data.content)
+        tool_module, frontmatter = load_tool_module_by_id(
+            form_data.id, content=form_data.content
+        )
+        form_data.meta.manifest = frontmatter
+        
+        # Get tool specs
+        specs = get_tool_specs(tool_module)
+        
+        # Insert the tool (using admin user ID for system tools)
+        tools = Tools.insert_new_tool("system", form_data, specs)
+        
+        if tools:
+            log.info("Default weather tool created successfully")
+            # Load into app state if provided
+            if app_state and "weather" not in app_state.TOOLS:
+                module, _ = load_tool_module_by_id("weather")
+                app_state.TOOLS["weather"] = module
+            return tools
+        else:
+            log.error("Failed to create default weather tool")
+            return None
+            
+    except Exception as e:
+        log.error(f"Error creating default weather tool: {e}")
+        return None
+
+
 router = APIRouter()
 
 
@@ -76,6 +178,7 @@ async def get_tools(request: Request, user=Depends(get_verified_user)):
             for tool in tools
             if tool.user_id == user.id
             or has_access(user.id, "read", tool.access_control)
+            or tool.id == "weather"  # Always include weather tool for all users
         ]
         return tools
 
@@ -91,6 +194,12 @@ async def get_tool_list(user=Depends(get_verified_user)):
         tools = Tools.get_tools()
     else:
         tools = Tools.get_tools_by_user_id(user.id, "write")
+    
+    # Always include weather tool for all users
+    weather_tool = Tools.get_tool_by_id("weather")
+    if weather_tool and weather_tool not in tools:
+        tools.append(weather_tool)
+    
     return tools
 
 

@@ -116,42 +116,41 @@ class Tools:
     def get_current_weather(
         self,
         city: str = Field(
-            "New York, NY", description="Get the current weather for a given city."
+            "Manila", description="Get the current weather for a given city."
         ),
     ) -> str:
         """
-        Get the current weather for a given city.
+        Get the current weather for a given city using the custom weather API.
         """
 
-        api_key = os.getenv("OPENWEATHER_API_KEY")
-        if not api_key:
-            return (
-                "API key is not set in the environment variable 'OPENWEATHER_API_KEY'."
-            )
-
-        base_url = "http://api.openweathermap.org/data/2.5/weather"
+        weather_api_url = os.getenv("WEATHER_API_URL", "http://208.94.36.189/index.php?rest_route=/custom-api/v1/weather")
+        
         params = {
-            "q": city,
-            "appid": api_key,
-            "units": "metric",  # Optional: Use 'imperial' for Fahrenheit
+            "city": city,
         }
 
         try:
-            response = requests.get(base_url, params=params)
-            response.raise_for_status()  # Raise HTTPError for bad responses (4xx and 5xx)
+            response = requests.get(weather_api_url, params=params)
+            response.raise_for_status()
             data = response.json()
 
-            if data.get("cod") != 200:
-                return f"Error fetching weather data: {data.get('message')}"
+            if not data.get("success"):
+                return f"Error fetching weather data: {data.get('message', 'Unknown error')}"
 
-            weather_description = data["weather"][0]["description"]
-            temperature = data["main"]["temp"]
-            humidity = data["main"]["humidity"]
-            wind_speed = data["wind"]["speed"]
+            weather_data = data["data"]["weather"]
+            location_data = data["data"]["location"]
+            
+            temperature = weather_data["temperature"]
+            description = weather_data["description"]
+            humidity = weather_data["humidity"]
+            wind_speed = weather_data["wind_speed"]
+            city_name = location_data["city"]
 
-            return f"Weather in {city}: {temperature}°C"
+            return f"Weather in {city_name}: {temperature}°C, {description}, Humidity: {humidity}%, Wind Speed: {wind_speed} m/s"
         except requests.RequestException as e:
             return f"Error fetching weather data: {str(e)}"
+        except Exception as e:
+            return f"Error parsing weather data: {str(e)}"
 `;
 
 	const saveHandler = async () => {
