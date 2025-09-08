@@ -87,7 +87,7 @@
 			localStorage.token,
 			{
 				model: model.id,
-				stream: true,
+				stream: !$config?.features?.disable_chat_streaming,
 				messages: [
 					system
 						? {

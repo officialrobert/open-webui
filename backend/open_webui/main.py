@@ -375,6 +375,7 @@ from open_webui.config import (
     DEFAULT_LOCALE,
     OAUTH_PROVIDERS,
     WEBUI_URL,
+    DISABLE_CHAT_STREAMING,
     RESPONSE_WATERMARK,
     # Admin
     ENABLE_ADMIN_CHAT_ACCESS,
@@ -690,6 +691,7 @@ app.state.BASE_MODELS = []
 ########################################
 
 app.state.config.WEBUI_URL = WEBUI_URL
+app.state.config.DISABLE_CHAT_STREAMING = DISABLE_CHAT_STREAMING
 app.state.config.ENABLE_SIGNUP = ENABLE_SIGNUP
 app.state.config.ENABLE_LOGIN_FORM = ENABLE_LOGIN_FORM
 
@@ -1688,6 +1690,7 @@ async def get_app_config(request: Request):
             "enable_login_form": app.state.config.ENABLE_LOGIN_FORM,
             "enable_websocket": ENABLE_WEBSOCKET_SUPPORT,
             "enable_version_update_check": ENABLE_VERSION_UPDATE_CHECK,
+            "disable_chat_streaming": app.state.config.DISABLE_CHAT_STREAMING,
             **(
                 {
                     "enable_direct_connections": app.state.config.ENABLE_DIRECT_CONNECTIONS,

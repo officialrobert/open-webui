@@ -1665,10 +1665,11 @@
 		}
 
 		const stream =
-			model?.info?.params?.stream_response ??
+			!$config?.features?.disable_chat_streaming &&
+			(model?.info?.params?.stream_response ??
 			$settings?.params?.stream_response ??
 			params?.stream_response ??
-			false;
+			false);
 
 		let messages = [
 			params?.system || $settings.system

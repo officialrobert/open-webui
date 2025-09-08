@@ -71,6 +71,7 @@ ENV OPENAI_API_BASE_URL="https://openai.inference.de-txl.ionos.com/v1"
 ENV OPENAI_API_KEY="" \
     WEBUI_SECRET_KEY="" \
     ENABLE_SIGNUP=true \
+    DISABLE_CHAT_STREAMING=false \
     ENABLE_LOGIN_FORM=true \
     ENABLE_SIGNUP_PASSWORD_CONFIRMATION=false \
     DEFAULT_USER_ROLE=admin \

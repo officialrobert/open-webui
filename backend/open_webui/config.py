@@ -1032,6 +1032,11 @@ TOOL_SERVER_CONNECTIONS = PersistentConfig(
 
 WEBUI_URL = PersistentConfig("WEBUI_URL", "webui.url", os.environ.get("WEBUI_URL", ""))
 
+DISABLE_CHAT_STREAMING = PersistentConfig(
+    "DISABLE_CHAT_STREAMING",
+    "chat.disable_streaming",
+    os.environ.get("DISABLE_CHAT_STREAMING", "False").lower() == "true",
+)
 
 ENABLE_SIGNUP = PersistentConfig(
     "ENABLE_SIGNUP",
