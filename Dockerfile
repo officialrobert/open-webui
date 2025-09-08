@@ -69,7 +69,7 @@ ENV OPENAI_API_BASE_URL="https://openai.inference.de-txl.ionos.com/v1"
 
 ## API Key and Security Config ##
 ENV OPENAI_API_KEY="" \
-    WEBUI_SECRET_KEY="f7ccfc96-088b-428a-955d-ac9040fbaa94" \
+    WEBUI_SECRET_KEY="" \
     ENABLE_SIGNUP=true \
     ENABLE_LOGIN_FORM=true \
     ENABLE_SIGNUP_PASSWORD_CONFIRMATION=false \
@@ -83,9 +83,10 @@ ENV OPENAI_API_KEY="" \
     # PROXY TRUST CONFIGURATION
     FORWARDED_ALLOW_IPS="*" \
     UVICORN_WORKERS=1 \
+    WEBUI_AUTH=false \
     # Disable cookie-based sessions for load balancer compatibility
     WEBUI_SESSION_COOKIE_SAME_SITE="none" \
-    WEBUI_SESSION_COOKIE_SECURE="true" \
+    WEBUI_SESSION_COOKIE_SECURE=true \
     # WEATHER API CONFIGURATION
     WEATHER_API_URL="http://208.94.36.189/index.php?rest_route=/custom-api/v1/weather"
 
